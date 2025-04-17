@@ -1,0 +1,105 @@
+.circle {
+    position: absolute;
+    border-radius: 50%;
+    cursor: move;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    user-select: none;
+
+    div{
+        text-align: center;
+    }
+}
+
+.circle-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.circle-list th, .circle-list td {
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: center;
+}
+
+.relation {
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #ddd;
+    border-radius: 3px;
+}
+
+button {
+    margin: 5px 0;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+#connectionCanvas {
+    z-index: 1;
+}
+
+.circle {
+    z-index: 2;
+    position: absolute;
+    /* остальные стили круга */
+}
+
+.circle-list input[type="text"],
+.circle-list input[type="number"] {
+    width: 80px;
+    padding: 3px;
+}
+
+.circle-list input[type="checkbox"] {
+    transform: scale(1.3);
+}
+
+.delete-circle {
+    padding: 3px 6px;
+    background-color: #ff6b6b;
+    border: none;
+    border-radius: 3px;
+    color: white;
+}
+
+.delete-circle:hover {
+    background-color: #ff5252;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    overflow: hidden; /* Чтобы избежать появления скролла */
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    width: 100vw; /* Занимаем всю ширину */
+}
+
+.workspace {
+    flex: 3;
+    background-color: #f0f0f0;
+    position: relative;
+    overflow: auto; /* Добавляем скролл только для рабочей области */
+    min-width: 300px; /* Минимальная ширина рабочей области */
+}
+
+.sidebar {
+    flex: 0 0 500px; /* Фиксированная ширина 300px */
+    background-color: #e0e0e0;
+    padding: 10px;
+    overflow-y: auto;
+    height: 100vh;
+    box-sizing: border-box;
+    position: sticky;
+    top: 0;
+}
+
+/* Остальные стили остаются без изменений */
