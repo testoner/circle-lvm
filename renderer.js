@@ -142,11 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const circleText = document.createElement("div");
     circleText.className = "circle-text";
-    circleText.textContent = `${circle.name}\nP1=${circle.probability1.toFixed(
-      2
-    )}\nP2=${circle.probability2.toFixed(2)}\nP3=${circle.probability3.toFixed(
-      2
-    )}`;
+    circleText.textContent = `${circle.name}`;
     circleElement.appendChild(circleText);
 
     circleElement.addEventListener("click", (e) => {
@@ -550,9 +546,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const outgoingRelations = relations.filter((rel) => rel.from === nodeId);
 
     if (outgoingRelations.length === 0) {
-      return `${node.name} (P1=${node.probability1.toFixed(2)} * P2=${node.probability2.toFixed(
-        2
-      )} * P3=${node.probability3.toFixed(2)})`;
+      return `${node.name}`;
     }
 
     const parts = [];
@@ -590,9 +584,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    return `${node.name} (P1=${node.probability1.toFixed(2)} * P2=${node.probability2.toFixed(
-      2
-    )} * P3=${node.probability3.toFixed(2)}) → ${formula}`;
+    return `${node.name} → ${formula}`;
   }
 
   function getRandomColor() {
