@@ -29,62 +29,65 @@ document.addEventListener("DOMContentLoaded", () => {
     connectionCanvas.width = workspace.clientWidth;
     connectionCanvas.height = workspace.clientHeight;
     workspace.appendChild(connectionCanvas);
-    connectionCtx = connectionCanvas.getContext("2d");
-  }
-
+    connectionCtx = connectionCanvas.getContext("2d"); // Исправлено: getContext вместо getBoundingClientRect
+}
   // Рисование связей с указанием типа
   function drawConnections() {
     if (!connectionCtx) return;
 
-    connectionCtx.clearRect(
-      0,
-      0,
-      connectionCanvas.width,
-      connectionCanvas.height
-    );
+    connectionCtx.clearRect(0, 0, connectionCanvas.width, connectionCanvas.height);
 
     relations.forEach((relation) => {
-      const fromCircle = circles.find((c) => c.id === relation.from);
-      const toCircle = circles.find((c) => c.id === relation.to);
+        const fromCircle = circles.find((c) => c.id === relation.from);
+        const toCircle = circles.find((c) => c.id === relation.to);
 
-      if (fromCircle && toCircle) {
-        const fromElement = document.getElementById(fromCircle.id);
-        const toElement = document.getElementById(toCircle.id);
+        if (fromCircle && toCircle) {
+            const fromElement = document.getElementById(fromCircle.id);
+            const toElement = document.getElementById(toCircle.id);
 
-        if (fromElement && toElement) {
-          const fromRect = fromElement.getBoundingClientRect();
-          const toRect = toElement.getBoundingClientRect();
-          const workspaceRect = workspace.getBoundingClientRect();
+            if (fromElement && toElement) {
+                const fromRect = fromElement.getBoundingClientRect();
+                const toRect = toElement.getBoundingClientRect();
+                const workspaceRect = workspace.getBoundingClientRect();
 
-          const fromX = fromRect.left + fromRect.width / 2 - workspaceRect.left;
-          const fromY = fromRect.top + fromRect.height / 2 - workspaceRect.top;
-          const toX = toRect.left + toRect.width / 2 - workspaceRect.left;
-          const toY = toRect.top + toRect.height / 2 - workspaceRect.top;
+                const fromX = fromRect.left + fromRect.width / 2 - workspaceRect.left;
+                const fromY = fromRect.top + fromRect.height / 2 - workspaceRect.top;
+                const toX = toRect.left + toRect.width / 2 - workspaceRect.left;
+                const toY = toRect.top + toRect.height / 2 - workspaceRect.top;
 
-          // Рисуем линию
-          connectionCtx.beginPath();
-          connectionCtx.moveTo(fromX, fromY);
-          connectionCtx.lineTo(toX, toY);
-          connectionCtx.strokeStyle =
-            relation.type === RELATION_TYPES.OR ? "#FF6B6B" : "#4ECDC4";
-          connectionCtx.lineWidth = 2;
-          connectionCtx.stroke();
+                // Устанавливаем цвет связи
+                let strokeColor;
+                if (relation.color) {
+                    strokeColor = relation.color; // Используем заданный цвет
+                } else {
+                    strokeColor = relation.type === RELATION_TYPES.OR ? "#4ECDC4" : "#4ECDC4";
+                }
 
-          // Рисуем стрелку и подпись типа
-          drawArrow(connectionCtx, fromX, fromY, toX, toY);
-          const midX = (fromX + toX) / 2;
-          const midY = (fromY + toY) / 2;
-          connectionCtx.fillStyle = "#000";
-          connectionCtx.font = "12px Arial";
-          connectionCtx.fillText(
-            relation.type.toUpperCase(),
-            midX - 10,
-            midY - 5
-          );
+                // Рисуем линию
+                connectionCtx.beginPath();
+                connectionCtx.moveTo(fromX, fromY);
+                connectionCtx.lineTo(toX, toY);
+                connectionCtx.strokeStyle = strokeColor;
+                connectionCtx.lineWidth = 2;
+                connectionCtx.stroke();
+
+                // Рисуем стрелку
+                drawArrow(connectionCtx, fromX, fromY, toX, toY);
+
+                // Подпись типа связи
+                const midX = (fromX + toX) / 2;
+                const midY = (fromY + toY) / 2;
+                connectionCtx.fillStyle = "#000";
+                connectionCtx.font = "12px Arial";
+                connectionCtx.fillText(
+                    relation.type.toUpperCase(),
+                    midX - 10,
+                    midY - 5
+                );
+            }
         }
-      }
     });
-  }
+}
 
   // Функция для рисования стрелки
   function drawArrow(ctx, fromX, fromY, toX, toY) {
@@ -115,7 +118,9 @@ document.addEventListener("DOMContentLoaded", () => {
       radius: 40,
       color: getRandomColor(),
       name: `Узел ${nextCircleId - 1}`,
-      probability: 0.95,
+      probability1: 0.95, // Первая вероятность
+      probability2: 0.90, // Вторая вероятность
+      probability3: 0.85, // Третья вероятность
     };
 
     circles.push(circle);
@@ -137,7 +142,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const circleText = document.createElement("div");
     circleText.className = "circle-text";
-    circleText.textContent = `${circle.name}\nP=${circle.probability.toFixed(
+    circleText.textContent = `${circle.name}\nP1=${circle.probability1.toFixed(
+      2
+    )}\nP2=${circle.probability2.toFixed(2)}\nP3=${circle.probability3.toFixed(
       2
     )}`;
     circleElement.appendChild(circleText);
@@ -246,7 +253,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <tr>
                 <th>ID</th>
                 <th>Название</th>
-                <th>Вероятность</th>
+                <th>Вероятность 1</th>
+                <th>Вероятность 2</th>
+                <th>Вероятность 3</th>
                 <th>Действия</th>
             </tr>
         `;
@@ -259,8 +268,14 @@ document.addEventListener("DOMContentLoaded", () => {
                   circle.name
                 }" data-index="${index}" data-prop="name"></td>
                 <td><input type="number" min="0" max="1" step="0.01" value="${
-                  circle.probability
-                }" data-index="${index}" data-prop="probability"></td>
+                  circle.probability1
+                }" data-index="${index}" data-prop="probability1"></td>
+                <td><input type="number" min="0" max="1" step="0.01" value="${
+                  circle.probability2
+                }" data-index="${index}" data-prop="probability2"></td>
+                <td><input type="number" min="0" max="1" step="0.01" value="${
+                  circle.probability3
+                }" data-index="${index}" data-prop="probability3"></td>
                 <td><button class="delete-circle" data-index="${index}">Удалить</button></td>
             `;
       table.appendChild(row);
@@ -313,9 +328,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (circleElement) {
       const textElement = circleElement.querySelector(".circle-text");
       if (textElement) {
-        textElement.textContent = `${
-          circle.name
-        }\nP=${circle.probability.toFixed(2)}`;
+        textElement.textContent = `${circle.name}\nP1=${circle.probability1.toFixed(
+          2
+        )}\nP2=${circle.probability2.toFixed(2)}\nP3=${circle.probability3.toFixed(
+          2
+        )}`;
       }
     }
   }
@@ -324,64 +341,89 @@ document.addEventListener("DOMContentLoaded", () => {
     relationsDiv.innerHTML = "<h3>Связи:</h3>";
 
     if (relations.length === 0) {
-      relationsDiv.innerHTML += "<p>Нет связей</p>";
-      return;
+        relationsDiv.innerHTML += "<p>Нет связей</p>";
+        return;
     }
 
     const table = document.createElement("table");
     table.innerHTML = `
-            <tr>
-                <th>От</th>
-                <th>Тип</th>
-                <th>К</th>
-                <th>Действия</th>
-            </tr>
-        `;
+        <tr>
+            <th>От</th>
+            <th>К</th>
+            <th>Тип</th>
+            <th>Цвет</th>
+            <th>Действия</th>
+        </tr>
+    `;
 
     relations.forEach((relation, index) => {
-      const fromCircle = circles.find((c) => c.id === relation.from);
-      const toCircle = circles.find((c) => c.id === relation.to);
+        const fromCircle = circles.find((c) => c.id === relation.from);
+        const toCircle = circles.find((c) => c.id === relation.to);
 
-      const row = document.createElement("tr");
-      row.innerHTML = `
-                <td>${fromCircle?.name || relation.from}</td>
-                <td>
-                    <select data-index="${index}" data-prop="type">
-                        <option value="${RELATION_TYPES.AND}" ${
-        relation.type === RELATION_TYPES.AND ? "selected" : ""
-      }>И (AND)</option>
-                        <option value="${RELATION_TYPES.OR}" ${
-        relation.type === RELATION_TYPES.OR ? "selected" : ""
-      }>ИЛИ (OR)</option>
-                    </select>
-                </td>
-                <td>${toCircle?.name || relation.to}</td>
-                <td><button class="delete-relation" data-index="${index}">×</button></td>
-            `;
-      table.appendChild(row);
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${fromCircle?.name || relation.from}</td>
+            <td>${toCircle?.name || relation.to}</td>
+            <td>
+                <select data-index="${index}" data-prop="type">
+                    <option value="${RELATION_TYPES.AND}" ${
+                      relation.type === RELATION_TYPES.AND ? "selected" : ""
+                    }>И (AND)</option>
+                    <option value="${RELATION_TYPES.OR}" ${
+                      relation.type === RELATION_TYPES.OR ? "selected" : ""
+                    }>ИЛИ (OR)</option>
+                </select>
+            </td>
+            <td>
+                <button class="color-relation" data-index="${index}" 
+                        style="background-color: ${relation.color || '#4ECDC4'}; 
+                               width: 20px; height: 20px; border: 1px solid #000;">
+                </button>
+            </td>
+            <td>
+                <button class="delete-relation" data-index="${index}">×</button>
+            </td>
+        `;
+        table.appendChild(row);
     });
 
     relationsDiv.appendChild(table);
 
-    // Обработчики для изменения типа связи
+    // Обработчик изменения типа связи
     document.querySelectorAll('select[data-prop="type"]').forEach((select) => {
-      select.addEventListener("change", (e) => {
-        const index = parseInt(e.target.dataset.index);
-        relations[index].type = e.target.value;
-        drawConnections();
-      });
+        select.addEventListener("change", (e) => {
+            const index = parseInt(e.target.dataset.index);
+            relations[index].type = e.target.value;
+            drawConnections();
+        });
     });
 
-    // Обработчики для удаления связей
-    document.querySelectorAll(".delete-relation").forEach((button) => {
-      button.addEventListener("click", (e) => {
-        const index = parseInt(e.target.dataset.index);
-        relations.splice(index, 1);
-        updateRelationsList();
-        drawConnections();
-      });
+    // Обработчик изменения цвета связи
+    document.querySelectorAll(".color-relation").forEach((button) => {
+        button.addEventListener("click", (e) => {
+            const index = parseInt(e.target.dataset.index);
+            // Переключаем цвет между красным и цветом по умолчанию
+            if (relations[index].color === '#FF0000') {
+                relations[index].color = null; // Сброс к цвету по умолчанию
+            } else {
+                relations[index].color = '#FF0000'; // Красный цвет
+            }
+            drawConnections();
+            updateRelationsList(); // Обновляем список, чтобы кнопка отобразила новый цвет
+        });
     });
-  }
+
+    // Обработчик удаления связи
+    document.querySelectorAll(".delete-relation").forEach((button) => {
+        button.addEventListener("click", (e) => {
+            const index = parseInt(e.target.dataset.index);
+            relations.splice(index, 1);
+            updateRelationsList();
+            drawConnections();
+        });
+    });
+}
+
 
   // Расчет надежности системы
   calculateBtn.addEventListener("click", () => {
@@ -426,8 +468,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Рекурсивный расчет надежности узла
-  // Модифицированная функция расчета
+  // Рекурсивный расчет надежности узла с учетом трех вероятностей
   function calculateNodeReliability(nodeId, visitedNodes = []) {
     const node = circles.find((c) => c.id === nodeId);
     if (!node) throw new Error(`Узел ${nodeId} не найден`);
@@ -443,7 +484,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const outgoingRelations = relations.filter((rel) => rel.from === nodeId);
 
     if (outgoingRelations.length === 0) {
-      return node.probability;
+      // Для конечного узла возвращаем произведение трех вероятностей
+      return node.probability1 * node.probability2 * node.probability3;
     }
 
     let reliability = 1.0;
@@ -489,7 +531,8 @@ document.addEventListener("DOMContentLoaded", () => {
       reliability *= groupReliability;
     });
 
-    return node.probability * reliability;
+    // Умножаем на произведение трех вероятностей текущего узла
+    return node.probability1 * node.probability2 * node.probability3 * reliability;
   }
 
   // Генерация формулы системы (для наглядности)
@@ -507,7 +550,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const outgoingRelations = relations.filter((rel) => rel.from === nodeId);
 
     if (outgoingRelations.length === 0) {
-      return `${node.name} (${node.probability.toFixed(2)})`;
+      return `${node.name} (P1=${node.probability1.toFixed(2)} * P2=${node.probability2.toFixed(
+        2
+      )} * P3=${node.probability3.toFixed(2)})`;
     }
 
     const parts = [];
@@ -545,7 +590,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    return `${node.name} (${node.probability.toFixed(2)}) → ${formula}`;
+    return `${node.name} (P1=${node.probability1.toFixed(2)} * P2=${node.probability2.toFixed(
+      2
+    )} * P3=${node.probability3.toFixed(2)}) → ${formula}`;
   }
 
   function getRandomColor() {

@@ -1,2 +1,2 @@
-npm install 
+npm i
 npm run make
