@@ -249,9 +249,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <tr>
                 <th>ID</th>
                 <th>Название</th>
-                <th>Вероятность 1</th>
-                <th>Вероятность 2</th>
-                <th>Вероятность 3</th>
+                <th>1. вероятность помехоустойчивого состояния</th>
+                <th>2. Вероятность выживания</th>
+                <th>3. Вероятность технически исправного состояния</th>
                 <th>Действия</th>
             </tr>
         `;
@@ -455,7 +455,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       resultDiv.innerHTML = `
                 <strong>Вероятность безотказной работы системы:</strong><br>
-                ${(totalReliability * 100).toFixed(2)}%<br>
+                ${(totalReliability).toFixed(2)}<br>
                 <small>${getSystemFormula(rootNodes.map((n) => n.id))}</small>
             `;
     } catch (e) {
