@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
       y: 100 + Math.random() * 300,
       radius: 40,
       color: getRandomColor(),
-      name: `Узел ${nextCircleId - 1}`,
+      name: `${nextCircleId - 1}`,
       probability1: 0.95, // Первая вероятность
       probability2: 0.90, // Вторая вероятность
       probability3: 0.85, // Третья вероятность
@@ -249,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <tr>
                 <th>ID</th>
                 <th>Название</th>
-                <th>1. вероятность помехоустойчивого состояния</th>
+                <th>Вероятность помехоустойчивого состояния</th>
                 <th>2. Вероятность выживания</th>
                 <th>3. Вероятность технически исправного состояния</th>
                 <th>Действия</th>
@@ -324,11 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (circleElement) {
       const textElement = circleElement.querySelector(".circle-text");
       if (textElement) {
-        textElement.textContent = `${circle.name}\nP1=${circle.probability1.toFixed(
-          2
-        )}\nP2=${circle.probability2.toFixed(2)}\nP3=${circle.probability3.toFixed(
-          2
-        )}`;
+        textElement.textContent = `${circle.name}`;
       }
     }
   }
@@ -357,6 +353,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const toCircle = circles.find((c) => c.id === relation.to);
 
         const row = document.createElement("tr");
+        // все таки если надо или вставить второй опцией
+        // <option value="${RELATION_TYPES.OR}" ${
+        //               relation.type === RELATION_TYPES.OR ? "selected" : ""
+        //             }>ИЛИ (OR)</option>
         row.innerHTML = `
             <td>${fromCircle?.name || relation.from}</td>
             <td>${toCircle?.name || relation.to}</td>
@@ -365,9 +365,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <option value="${RELATION_TYPES.AND}" ${
                       relation.type === RELATION_TYPES.AND ? "selected" : ""
                     }>И (AND)</option>
-                    <option value="${RELATION_TYPES.OR}" ${
-                      relation.type === RELATION_TYPES.OR ? "selected" : ""
-                    }>ИЛИ (OR)</option>
+                    
                 </select>
             </td>
             <td>
